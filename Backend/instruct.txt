@@ -1,0 +1,14 @@
+Backend install requirements
+
+Install Python
+pip install "fastapi[all]"
+pip install pymongo
+pip install docker
+
+Backend run commands
+ - to run application server:
+ 	$ uvicorn main:app --reload
+ - to run database server:
+	$ sudo docker compose up -d
+ - to stop database server:
+	$ sudo docker compose stop
