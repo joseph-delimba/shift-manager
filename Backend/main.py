@@ -4,7 +4,7 @@ from fastapi import FastAPI
 
 from pymongo import MongoClient
 
-from models import Gender, Role, User, ShiftEvent
+from models import defaultUsers, defaultEvents, buildUser, buildShiftEvent, Gender, Role
 
 app = FastAPI()
 
@@ -13,134 +13,18 @@ db = client["Shift_Manager"] #database name
 collectionUsers = db["users"] #collection name
 collectionEvents = db["events"]
 
-def buildUser(
-        email: str,
-        password: str,
-        first_name: str,
-        last_name: str,
-        gender: Gender,
-        role: Role):
-    return {
-        "email": email,
-        "password": password,
-        "first_name": first_name,
-        "last_name": last_name,
-        "gender": gender,
-        "role": role,
-        "shifts": []
-    }
-
-def buildShiftEvent(
-        created_by,
-        shift_worker,
-        day,
-        month,
-        year,
-        start_time,
-        end_time):
-    return {
-        "created_by": created_by,
-        "shift_worker": shift_worker,
-        "day": day,
-        "month": month,
-        "year": year,
-        "start_time": start_time,
-        "end_time": end_time
-    }
-
-defaultUsers: List[dict] = [
-    buildUser(
-        email="Peyton@gmail.com",
-        password="password",
-        first_name="Peyton",
-        last_name="Nill",
-        gender=Gender.female,
-        role=Role.employee
-    ),
-    buildUser(
-        email="Kolla@gmail.com",
-        password="password",
-        first_name="Kolla",
-        last_name="Nill",
-        gender=Gender.female,
-        role=Role.employee
-    ),
-    buildUser(
-        email="Teh@gmail.com",
-        password="password",
-        first_name="Teh",
-        last_name="Nill",
-        gender=Gender.male,
-        role=Role.employee
-    ),
-]
-
-defaultEvents: List[dict] = [
-    buildShiftEvent(
-        created_by="Peyton@gmail.com",
-        shift_worker="Kolla@gmail.com",
-        day=12,
-        month=1,
-        year=2023,
-        start_time="9:00",
-        end_time="5:00"
-    ),
-    buildShiftEvent(
-        created_by="Peyton@gmail.com",
-        shift_worker="Kolla@gmail.com",
-        day=13,
-        month=1,
-        year=2023,
-        start_time="9:00",
-        end_time="5:00"
-    ),
-    buildShiftEvent(
-        created_by="Peyton@gmail.com",
-        shift_worker="Kolla@gmail.com",
-        day=14,
-        month=1,
-        year=2023,
-        start_time="9:00",
-        end_time="5:00"
-    ),
-    buildShiftEvent(
-        created_by="Peyton@gmail.com",
-        shift_worker="Teh@gmail.com",
-        day=15,
-        month=1,
-        year=2023,
-        start_time="9:00",
-        end_time="5:00"
-    ),
-    buildShiftEvent(
-        created_by="Peyton@gmail.com",
-        shift_worker="Teh@gmail.com",
-        day=16,
-        month=1,
-        year=2023,
-        start_time="9:00",
-        end_time="5:00"
-    ),
-    buildShiftEvent(
-        created_by="Peyton@gmail.com",
-        shift_worker="Teh@gmail.com",
-        day=17,
-        month=1,
-        year=2023,
-        start_time="9:00",
-        end_time="5:00"
-    )
-]
+dU = defaultUsers()
+dE = defaultEvents()
 
 # Add relavent shifts to each user
-for user in defaultUsers:
-    for event in defaultEvents:
+for user in dU:
+    for event in dE:
         if user['email'] == event['created_by'] or user['email'] == event['shift_worker']:
             user['shifts'].append(event)
 
-for user in defaultUsers:
+for user in dU:
     collectionUsers.insert_one(user)
-for event in defaultEvents:
+for event in dE:
     collectionEvents.insert_one(event)
 
 def getUser(userEmail: str):
@@ -155,7 +39,7 @@ async def root():
 
 @app.get("/users")
 async def fetch_users():
-    #return defaultUsers
+    #return dU
     ret = []
     for item in collectionUsers.find({}, {"_id": 0}):
         ret.append(item)
@@ -180,7 +64,7 @@ async def register_user(
             last_name,
             gender,
             role)
-    #defaultUsers.append(user)
+    #dU.append(user)
     collectionUsers.insert_one(user)
     return 1
 
@@ -197,7 +81,7 @@ async def login(email: str, password: str):
 
 @app.get("/events")
 async def fetch_events():
-    #return defaultEvents
+    #return dE
     ret = []
     for item in collectionEvents.find({}, {"_id": 0}):
         print(item)
@@ -206,27 +90,22 @@ async def fetch_events():
 
 @app.post("/events")
 async def register_event(
+                        name: str,
                         created_by: str,
                         shift_worker: str,
-                        day: int,
-                        month: int,
-                        year: int,
-                        start_time: str,
-                        end_time: str
+                        start: str,
+                        end: str,
+                        timed: bool
                         ):
     if (getUser(created_by) == None) or (getUser(shift_worker) == None):
         return -1
 
-    if (day > 31 or day < 1) or (month > 12 or month < 1):
-        return -1
-
     event = buildShiftEvent(
+        name,
         created_by,
         shift_worker,
-        day,
-        month,
-        year,
-        start_time,
-        end_time)
+        start,
+        end,
+        timed)
     collectionEvents.insert_one(event)
     return 1
