@@ -4,6 +4,7 @@ Install Python
 pip install "fastapi[all]"
 pip install pymongo
 pip install docker
+pip install pyrebase4
 
 Backend run commands
  - to run application server:
