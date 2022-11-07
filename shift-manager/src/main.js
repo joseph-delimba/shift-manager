@@ -1,11 +1,14 @@
-import { createApp, VueElement } from 'vue'
+import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 import vuetify from './plugins/vuetify'
-import VCalendar from "v-calendar"
+import { loadFonts } from './plugins/webfontloader'
 import axios from "axios"
+import VCalendar from "v-calendar"
 
-axios.defaults.withCredentials = true
-VueElement.use(VCalendar)
-axios.defaults.baseURL = 'http://localhost:8000/'
-createApp(App).use(router).mount('#app')
+loadFonts()
+
+createApp(App)
+  .use(router)
+  .use(vuetify)
+  .mount('#app')

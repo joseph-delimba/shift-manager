@@ -1,20 +1,18 @@
 <template>
   <v-app>
-    <v-content>
-      <router-view></router-view>
-    </v-content>
+    <v-main>
+      <router-view/>
+    </v-main>
   </v-app>
 </template>
+
 <script>
 
 export default {
-  name: "App",
-  components: { },
+  name: 'App',
 
-  data() {
-    return {
-      newlogin: false,
-    };
-  },
-};
+  data: () => ({
+    //
+  }),
+}
 </script>
