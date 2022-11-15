@@ -6,7 +6,6 @@
 
 <template>
     <div class="calendar">
-        Employee Calendar
         <Calendar />
         <LogOut />
     </div>
