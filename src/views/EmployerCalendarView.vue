@@ -1,0 +1,13 @@
+<script setup>
+    import Calendar from '@/components/Calendar.vue';
+    import LogOut from '@/components/LogOut.vue';
+</script>
+
+
+<template>
+    <div class="calendar">
+        Employer Calendar
+        <Calendar />
+        <LogOut />
+    </div>
+</template>
