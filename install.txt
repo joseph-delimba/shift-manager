@@ -1,0 +1,7 @@
+
+Install:
+npm install firebase@^8.10.0
+npm install vuetify 
+
+To run:
+vue serve
