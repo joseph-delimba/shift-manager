@@ -47,13 +47,13 @@
                 <v-text-field
                   v-model="startTime"
                   type="text"
-                  label="Start time (0:00-24:00)"
+                  label="Start time (##:##)"
                 >
                 </v-text-field>
                 <v-text-field
                   v-model="endTime"
                   type="text"
-                  label="End time (0:00-24:00)"
+                  label="End time (##:##)"
                 >
                 </v-text-field>
                 <v-text-field
@@ -330,7 +330,7 @@ export default {
         this.startTime = "";
         this.endTime = "";
       } else {
-        alert("Job, start, end, and employee are required");
+        alert("Job, date, start time, end time, and employee are required");
       }
     },
     async deleteEvent(ev) {
